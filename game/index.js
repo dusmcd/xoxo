@@ -5,50 +5,67 @@ export const move = (player, position) => {
 }
 
 function winner(board) {
-  let result = null;
-
+  let result = null
   // Horizontal rows
-  board.map(row => {
-    if (streak(row)){
-      result = streak(row);
+
+  let row = []
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      row.push(board.getIn([r, c]))
     }
-  });
-
+    if (streak(row)) {
+      result = streak(row)
+      break
+    }
+    row = []
+  }
   // Vertical rows
-  board.map((row, key) => {
+  let col = []
+  for (let c = 0; c < 3; c++) {
+    for (let r = 0; r < 3; r++) {
+      col.push(board.getIn([r, c]))
+    }
+    if (streak(col)) {
+      result = streak(col)
+      break
+    }
+    col = []
+  }
+  // Diagonal
+  let diagonal = [board.getIn([0, 2]), board.getIn([1, 1]), board.getIn([2, 0])]
+  if (streak(diagonal)) result = streak(diagonal)
 
-  });
+  diagonal = [board.getIn([0, 0]), board.getIn([1, 1]), board.getIn([2, 2])]
+  if (streak(diagonal)) result = streak(diagonal)
 
-  // Diagonals
-
-  return result;
+  return result
 }
 
-function streak(row) {
-  let countX = 0;
-  let countO = 0;
+function streak(coordinates) {
+  let countX = 0
+  let countO = 0
 
-  row.map((cell) => {
-    if (cell === 'X'){
-      countX++;
-    } else if (cell === 'O'){
-      countO++;
+  coordinates.map(cell => {
+    if (cell === 'X') {
+      countX++
+    } else if (cell === 'O') {
+      countO++
     }
-  });
+  })
 
-  if (countX === 3){
-    return 'X';
-  } else if (countO === 3){
-    return 'O';
+  if (countX === 3) {
+    return 'X'
+  } else if (countO === 3) {
+    return 'O'
   }
 }
 
-let initalBoard = Map();
+let initalBoard = Map()
 
 const initialState = {
   turn: 'X',
   position: [],
-  board: initalBoard
+  board: initalBoard,
 }
 
 /*
@@ -65,12 +82,12 @@ export default function reducer(state = initialState, action) {
     console.log('BOARD', state.board)
     const currentPlayer = action.player === 'X' ? 'O' : 'X'
 
-    const newBoard = state.board.setIn(action.position, action.player);
+    const newBoard = state.board.setIn(action.position, action.player)
 
     // check the winner
-    if (winner(newBoard)){
-      console.log('WINNER!! ->', winner(newBoard));
-      process.exit(0);
+    if (winner(newBoard)) {
+      console.log('WINNER!! ->', winner(newBoard))
+      process.exit(0)
       // return state.board;
     }
 
@@ -78,8 +95,8 @@ export default function reducer(state = initialState, action) {
       turn: currentPlayer,
       position: action.position,
       board: newBoard,
-    };
+    }
   } else {
-    return state;
+    return state
   }
 }
