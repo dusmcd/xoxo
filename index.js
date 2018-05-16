@@ -14,7 +14,7 @@ const printBoard = () => {
 }
 
 const getInput = player => async () => {
-  const {turn} = game.getState()  
+  const {turn} = game.getState()
   if (turn !== player) return
   const ans = await inquirer.prompt([{
     type: 'input',
@@ -29,7 +29,7 @@ const getInput = player => async () => {
 const game = createStore(gameReducer)
 
 // Debug: Print the state
-// game.subscribe(() => console.log(game.getState()))
+game.subscribe(() => console.log(game.getState()))
 
 game.subscribe(printBoard)
 game.subscribe(getInput('X'))
