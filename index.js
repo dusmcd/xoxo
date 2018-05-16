@@ -27,6 +27,12 @@ const getInput = player => async () => {
   game.dispatch(move(turn, [row, col]))
 }
 
+const checkError = () => {
+  if (game.getState().error){
+    console.log(game.getState().error);
+  }
+};
+
 // Create the store
 const game = createStore(gameReducer)
 
@@ -36,6 +42,7 @@ game.subscribe(() => console.log(game.getState()))
 game.subscribe(printBoard)
 game.subscribe(getInput('X'))
 game.subscribe(getInput('O'))
+game.subscribe(checkError);
 
 // We dispatch a dummy START action to call all our
 // subscribers the first time.

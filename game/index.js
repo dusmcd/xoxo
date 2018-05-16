@@ -2,9 +2,9 @@ import { Map } from 'immutable'
 
 export const move = (player, position) => {
   return { type: 'MOVE', player, position }
-}
+};
 
-function winner(board) {
+function winner(board) { // eslint-disable-line
   let result = null
   // Horizontal rows
 
@@ -66,6 +66,7 @@ const initialState = {
   turn: 'X',
   position: [],
   board: initalBoard,
+  error: null
 }
 
 /*
@@ -77,6 +78,23 @@ Map {
 }
 */
 
+function bad(state, action) {
+  // is the move valid
+  const [first, second] = action.position;
+
+  // are they valid coordinates
+  if (first > 2 || first < 0 || isNaN(first) || second > 2 || second < 0 || isNaN(second)){
+    return 'Not a valid input';
+  }
+
+  // has position been taken yet
+  if (state.board.getIn(action.position)){
+    return 'Move taken';
+  }
+
+  return null;
+}
+
 export default function reducer(state = initialState, action) {
   if (action.type === 'MOVE') {
     console.log('BOARD', state.board)
@@ -87,8 +105,13 @@ export default function reducer(state = initialState, action) {
     // check the winner
     if (winner(newBoard)) {
       console.log('WINNER!! ->', winner(newBoard))
-      process.exit(0)
-      // return state.board;
+      process.exit(0);
+    }
+
+    const error = bad(state, action);
+
+    if (error){
+      return Object.assign({}, state, {error});
     }
 
     return {
